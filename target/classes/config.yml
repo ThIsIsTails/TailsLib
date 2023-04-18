@@ -1,0 +1,7 @@
+debug:
+  enabled: false
+  console: true # Логировать в консоль?
+  prefix: "&e[Откладка &8|&r %s&e]"
+  info: "ИНФО"
+  warn: "&eПРЕД"
+  error: "&cОШИБКА"
