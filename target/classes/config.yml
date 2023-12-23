@@ -5,3 +5,8 @@ debug:
   info: "ИНФО"
   warn: "&eПРЕД"
   error: "&cОШИБКА"
+
+items:
+  loadBlockedItems: no
+
+blacklistedItems: []

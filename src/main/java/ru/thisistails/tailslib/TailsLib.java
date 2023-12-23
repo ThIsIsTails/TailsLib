@@ -1,7 +1,9 @@
 package ru.thisistails.tailslib;
 
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import ru.thisistails.tailslib.Tools.Config;
 import ru.thisistails.tailslib.Tools.YAMLManager;
 
 public class TailsLib extends JavaPlugin {
@@ -15,6 +17,7 @@ public class TailsLib extends JavaPlugin {
         getLogger().info("Loading...");
 
         YAMLManager.setup();
+        Config.reloadConfig();
     }
     
 }

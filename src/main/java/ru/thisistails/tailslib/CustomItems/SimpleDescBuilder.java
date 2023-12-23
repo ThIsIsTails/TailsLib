@@ -6,10 +6,10 @@ import java.util.List;
 import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
 
-public class DescBuilder implements IDescBuilder {
+public class SimpleDescBuilder implements IDescBuilder {
 
     private List<Component> desc, buffs, debuffs;
-    public DescBuilder() {
+    public SimpleDescBuilder() {
         this.desc = new ArrayList<>();
         this.buffs = new ArrayList<>();
         this.debuffs = new ArrayList<>();
