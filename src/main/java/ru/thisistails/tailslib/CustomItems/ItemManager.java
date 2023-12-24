@@ -43,20 +43,20 @@ public class ItemManager implements Listener {
     }
 
     public void register(CustomItem item) {
-        String id = item.getId().asString();
+        String id = item.getId();
 
-        if (blacklistedItems.contains(item)) {
+        if (isItemBlocked(item)) {
             if (!Config.getConfig().getBoolean("items.loadBlockedItems")) {
-                Bukkit.getLogger().warning("Item with ID: " + id + " in blacklist. Skipping.");
+                Bukkit.getLogger().warning("[ItemManager] " + "Item with ID: " + id + " in blacklist. Skipping.");
                 return;
             } else {
-                Bukkit.getLogger().warning("Item with ID: " + id + " in blacklist but still registering.");
+                Bukkit.getLogger().warning("[ItemManager] " + "Item with ID: " + id + " in blacklist but still registering.");
             }
         }
 
         items.put(id, item);
 
-        Bukkit.getLogger().info(id + " registered.");
+        Bukkit.getLogger().info("[ItemManager] " + id + " registered.");
     }
 
     /**
@@ -66,7 +66,7 @@ public class ItemManager implements Listener {
     public void blockItem(CustomItem item) {
         YamlConfiguration yaml = (YamlConfiguration) YAMLManager.require("TailsLib", "config.yml");
         List<String> blackList = (List<String>) yaml.getList("blacklistedItems");
-        blackList.add(item.getId().asString());
+        blackList.add(item.getId());
         yaml.set("blacklistedItems", blackList);
         Config.reloadConfig();
     }
@@ -93,7 +93,7 @@ public class ItemManager implements Listener {
 
         meta.displayName(Component.text(ChatColor.translateAlternateColorCodes('&', item.getName())));
         meta.lore(item.getLore().build());
-        meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, item.getId().asString());
+        meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, item.getId());
         itemstack.setItemMeta(meta);
 
         itemstack = item.getImprovedItemStack(itemstack);
@@ -109,7 +109,7 @@ public class ItemManager implements Listener {
         if (!event.hasItem()) return;
 
         for (Map.Entry<String, CustomItem> item : items.entrySet()) {
-            if (_item.equals(item.getValue().getId()) || _item.getItemMeta().getPersistentDataContainer().has(item.getValue().getId())) {
+            if (_item.equals(createItem(item.getValue())) || _item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(Bukkit.getPluginManager().getPlugin("TailsLib"), item.getValue().getId()))) {
                 if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
                     item.getValue().leftClick(event);
                     break;

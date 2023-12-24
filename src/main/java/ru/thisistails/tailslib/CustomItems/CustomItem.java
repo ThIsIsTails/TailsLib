@@ -1,7 +1,6 @@
 package ru.thisistails.tailslib.CustomItems;
 
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -11,7 +10,7 @@ public interface CustomItem {
     /**
      * Айди которое использует сервер и другие плагины.
      */
-    public @NotNull NamespacedKey getId();
+    public @NotNull String getId();
     /**
      * Отображаемое имя для игрока.
      */

@@ -1,5 +1,7 @@
 package ru.thisistails.tailslib.Tools;
 
+import javax.annotation.Nullable;
+
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -23,25 +25,25 @@ public class Debug {
         if (enabled) Bukkit.getLogger().warning("Debug enabled.");
     }
     
-    public static void info(Player player, String message) {
+    public static void info(@Nullable Player player, String message) {
         if (!enabled) return;
 
-        player.sendMessage(Component.text(String.format(prefix, info) + ChatColor.translateAlternateColorCodes('&', "&r " + message)));
-        if (consoleLogging) Bukkit.getLogger().info("[DEBUG | " + player.getName() + "] " + message);
+        if (player != null) player.sendMessage(Component.text(String.format(prefix, info) + ChatColor.translateAlternateColorCodes('&', "&r " + message)));
+        if (consoleLogging) Bukkit.getLogger().info("[DEBUG] " + message);
     }
 
     public static void warn(Player player, String message) {
         if (!enabled) return;
 
-        player.sendMessage(Component.text(String.format(prefix, warn) + ChatColor.translateAlternateColorCodes('&', "&r " + message)));
-        if (consoleLogging) Bukkit.getLogger().warning("[DEBUG | " + player.getName() + "] " + message);
+        if (player != null) player.sendMessage(Component.text(String.format(prefix, warn) + ChatColor.translateAlternateColorCodes('&', "&r " + message)));
+        if (consoleLogging) Bukkit.getLogger().warning("[DEBUG] " + message);
     }
 
     public static void error(Player player, String message) {
         if (!enabled) return;
 
-        player.sendMessage(Component.text(String.format(prefix, error) + ChatColor.translateAlternateColorCodes('&', "&r " + message)));
-        if (consoleLogging) Bukkit.getLogger().severe("[DEBUG | " + player.getName() + "] " + message);
+        if (player != null) player.sendMessage(Component.text(String.format(prefix, error) + ChatColor.translateAlternateColorCodes('&', "&r " + message)));
+        if (consoleLogging) Bukkit.getLogger().severe("[DEBUG] " + message);
     }
 
 }

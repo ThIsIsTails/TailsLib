@@ -36,19 +36,12 @@ public class YAMLManager {
     }
 
     /**
-     * @deprecated      Используйте getAndTranslateString
-     * @see             YMLUtils
-     * @since           1.0
-     */
-    @Deprecated
-    public static FileConfiguration getLocale() { return locale; }
-
-    /**
      * Запрос на определённый файл yml по определённуму пути.
      * Если файла не существует то возьмёт и создаст этот файл а после вернёт как искомое.
      *
      * @param   filePath    путь к файлу без слэша в начале.
      * @return              Запрошенный файл конфигурации.
+     * FIXME: Пофиксить баг с перезаписыванием файла
      */
     public static FileConfiguration require(String pluginName, String filePath) {
 

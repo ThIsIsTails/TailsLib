@@ -8,5 +8,6 @@ debug:
 
 items:
   loadBlockedItems: no
+  registerTestItems: yes
 
 blacklistedItems: []

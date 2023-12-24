@@ -5,3 +5,7 @@ author: ThIsIsTails
 description: TailsLib is a lib for plugins by ThIsIsTails.
 api-version: 1.19
 prefix: TailsLib
+
+commands:
+  listitems:
+    usage: /listitems
