@@ -1,7 +1,0 @@
-{
-    "java.configuration.updateBuildConfiguration": "automatic",
-    "java.compile.nullAnalysis.mode": "automatic",
-    "yaml.schemas": {
-        "https://json.schemastore.org/bukkit-plugin.json": "file:///home/thisistails/Development/tailslib-mc/src/main/resources/plugin.yml"
-    }
-}
