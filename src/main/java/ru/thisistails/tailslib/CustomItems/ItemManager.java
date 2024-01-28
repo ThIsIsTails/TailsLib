@@ -8,19 +8,23 @@ import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.Nullable;
 
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
 import ru.thisistails.tailslib.Tools.Config;
+import ru.thisistails.tailslib.Tools.Debug;
 import ru.thisistails.tailslib.Tools.YAMLManager;
 
 public class ItemManager implements Listener {
@@ -75,7 +79,7 @@ public class ItemManager implements Listener {
      * Разблокирует предмет на сервере
      * @param item Предмет
      */
-    public void unBlockItem(CustomItem item) {
+    public void unblockItem(CustomItem item) {
         YamlConfiguration yaml = (YamlConfiguration) YAMLManager.require("TailsLib", "config.yml");
         List<String> blackList = (List<String>) yaml.getList("blacklistedItems");
         blackList.remove(item.getId());
@@ -101,27 +105,70 @@ public class ItemManager implements Listener {
         return itemstack;
     }
 
+    public @Nullable CustomItem getItemByID(String id) {
+        return items.get(id);
+    }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void clicks(PlayerInteractEvent event) {
-        ItemStack _item = event.getItem();
+        
+        ItemStack item = event.getItem();
 
-        if (!event.hasItem()) return;
+        if (item.getItemMeta() != null && item.getItemMeta().getPersistentDataContainer().has(key, PersistentDataType.STRING)) {
+            String itemID = item.getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING);
+            CustomItem citem = items.get(itemID);
 
-        for (Map.Entry<String, CustomItem> item : items.entrySet()) {
-            if (_item.equals(createItem(item.getValue())) || _item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(Bukkit.getPluginManager().getPlugin("TailsLib"), item.getValue().getId()))) {
-                if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
-                    item.getValue().leftClick(event);
-                    break;
-                } else if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                    item.getValue().rightClick(event);
-                    break;
-                }
-
+            if (citem == null) {
+                Debug.error(event.getPlayer(), "Предмет " + itemID + " не зарегистрирован. (Предмет игрока: " + event.getPlayer() + ")");
+                return;
             }
 
+            if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
+                citem.leftClick(event);
+                return;
+            }
+
+            if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+                citem.rightClick(event);
+                return;
+            }
         }
 
     }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void damage(EntityDamageByEntityEvent event) {
+
+        if (!(event.getDamager() instanceof Player)) return;
+
+        Player damager = (Player) event.getDamager();
+        ItemStack heldItem = damager.getInventory().getItemInMainHand();
+        ItemStack offHandHeldItem = damager.getInventory().getItemInOffHand();
+
+        String heldItemID, offHandHeldItemID;
+
+        if (heldItem.getItemMeta() != null && heldItem.getItemMeta().getPersistentDataContainer().has(key, PersistentDataType.STRING)) {
+            heldItemID = heldItem.getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING);
+            CustomItem citem = items.get(heldItemID);
+            if (citem == null) {
+                Debug.error(damager, "Предмет " + heldItemID + " не зарегистрирован. (Предмет игрока: " + damager.getName() + ")");
+            } else {
+                citem.itemDamagedEntity(event);
+            }
+        }
+
+        if (offHandHeldItem.getItemMeta() != null && offHandHeldItem.getItemMeta().getPersistentDataContainer().has(key, PersistentDataType.STRING)) {
+            offHandHeldItemID = offHandHeldItem.getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING);
+            CustomItem citem = items.get(offHandHeldItemID);
+            if (citem == null) {
+                Debug.error(damager, "Предмет " + offHandHeldItemID + " не зарегистрирован. (Предмет игрока: " + damager.getName() + ")");
+            } else {
+                citem.itemDamagedEntity(event);
+            }
+        }
+
+    }
+
+    
 
 }

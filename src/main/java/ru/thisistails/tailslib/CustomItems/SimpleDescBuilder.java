@@ -6,9 +6,13 @@ import java.util.List;
 import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
 
+/**
+ * Простой строитель описаний.
+ */
 public class SimpleDescBuilder implements IDescBuilder {
 
     private List<Component> desc, buffs, debuffs;
+
     public SimpleDescBuilder() {
         this.desc = new ArrayList<>();
         this.buffs = new ArrayList<>();
@@ -18,12 +22,12 @@ public class SimpleDescBuilder implements IDescBuilder {
     private Component other;
 
     public SimpleDescBuilder setOther(String o) {
-        other = Component.text(ChatColor.translateAlternateColorCodes('&', o));
+        other = Component.text(ChatColor.translateAlternateColorCodes('&', "&f" + o));
         return this;
     }
 
     public SimpleDescBuilder addDesc(String description) {
-        desc.add(Component.text(description));
+        desc.add(Component.text(ChatColor.translateAlternateColorCodes('&', "&f" + description)));
         return this;
     }
 
@@ -33,7 +37,7 @@ public class SimpleDescBuilder implements IDescBuilder {
     }
 
     public SimpleDescBuilder addDebuff(String debuff) {
-        debuffs.add(Component.text(ChatColor.translateAlternateColorCodes('&', "&2&l*" + debuff)));
+        debuffs.add(Component.text(ChatColor.translateAlternateColorCodes('&', "&c&l*" + debuff)));
         return this;
     }
 

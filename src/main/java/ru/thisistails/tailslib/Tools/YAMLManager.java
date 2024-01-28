@@ -25,11 +25,14 @@ public class YAMLManager {
         Bukkit.getPluginManager().getPlugin("TailsLib").getDataFolder().mkdir();
 
         locFile = new File(Bukkit.getPluginManager().getPlugin("TailsLib").getDataFolder() + "/config.yml");
-        try {
-            //locFile.mkdir();
-            Bukkit.getPluginManager().getPlugin("TailsLib").saveResource("config.yml", true);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+        if (!locFile.exists()) {
+            try {
+                //locFile.mkdir();
+                Bukkit.getPluginManager().getPlugin("TailsLib").saveResource("config.yml", false);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+                return;
+            }
         }
 
         locale = YamlConfiguration.loadConfiguration(locFile);
@@ -41,7 +44,6 @@ public class YAMLManager {
      *
      * @param   filePath    путь к файлу без слэша в начале.
      * @return              Запрошенный файл конфигурации.
-     * FIXME: Пофиксить баг с перезаписыванием файла
      */
     public static FileConfiguration require(String pluginName, String filePath) {
 

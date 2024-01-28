@@ -3,9 +3,17 @@ name: TailsLib
 main: ru.thisistails.tailslib.TailsLib
 author: ThIsIsTails
 description: TailsLib is a lib for plugins by ThIsIsTails.
-api-version: 1.19
+api-version: 1.20
 prefix: TailsLib
 
 commands:
   listitems:
     usage: /listitems
+    permission: tailslib.citem.list
+  citem:
+    usage: /citem [ID] (PLAYER)
+    permission: tailslib.citem.give
+  tailslib:
+    usage: /tailslib [info|dlog (true|false)]
+    permission: tailslib.settings
+    description: TailsLib settings command.

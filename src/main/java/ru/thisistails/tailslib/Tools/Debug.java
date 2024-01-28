@@ -1,5 +1,8 @@
 package ru.thisistails.tailslib.Tools;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
@@ -14,6 +17,8 @@ public class Debug {
     private static final boolean consoleLogging, enabled;
     private static final String prefix, info, warn, error;
 
+    private static Set<Player> ignore = new HashSet<>();
+
     static {
         YamlConfiguration yaml = (YamlConfiguration) YAMLManager.require("TailsLib", "config.yml");
         prefix = yaml.getString("debug.prefix");
@@ -24,25 +29,26 @@ public class Debug {
         enabled = yaml.getBoolean("debug.enabled");
         if (enabled) Bukkit.getLogger().warning("Debug enabled.");
     }
+
+    public static boolean ignorePlayer(Player player) { return ignore.add(player); }
+    public static boolean stopIgnoringPlayer(Player player) { return ignore.remove(player); }
     
     public static void info(@Nullable Player player, String message) {
         if (!enabled) return;
 
-        if (player != null) player.sendMessage(Component.text(String.format(prefix, info) + ChatColor.translateAlternateColorCodes('&', "&r " + message)));
+        if (player != null && !ignore.contains(player)) player.sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', String.format(prefix, info) + "&r " + message)));
         if (consoleLogging) Bukkit.getLogger().info("[DEBUG] " + message);
     }
 
     public static void warn(Player player, String message) {
         if (!enabled) return;
 
-        if (player != null) player.sendMessage(Component.text(String.format(prefix, warn) + ChatColor.translateAlternateColorCodes('&', "&r " + message)));
+        if (player != null && !ignore.contains(player)) player.sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', String.format(prefix, warn) + "&r " + message)));
         if (consoleLogging) Bukkit.getLogger().warning("[DEBUG] " + message);
     }
 
     public static void error(Player player, String message) {
-        if (!enabled) return;
-
-        if (player != null) player.sendMessage(Component.text(String.format(prefix, error) + ChatColor.translateAlternateColorCodes('&', "&r " + message)));
+        if (player != null) player.sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', String.format(prefix, error) + "&r " + message)));
         if (consoleLogging) Bukkit.getLogger().severe("[DEBUG] " + message);
     }
 

@@ -9,41 +9,45 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
+import net.md_5.bungee.api.ChatColor;
 import ru.thisistails.tailslib.CustomItems.CustomItem;
 import ru.thisistails.tailslib.CustomItems.ItemManager;
 
-// FIXME: Не пишет зарегестрированные предметы.
 public class ListItems implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command label, @NotNull String arg2,
             @NotNull String[] args) {
+
+
+        Map<String, CustomItem> lItems = ItemManager.getManager().getItems();
+
+        // Эта херабора работает только так.
+        // Я в душе не ебу почему и как, но Component#append не хочет работать как задуманно.
+        // Поэтому это работает только так.
+        Component toSend;
+        StringBuffer text = new StringBuffer();
         
-        if (!sender.hasPermission("tailslib.listregistereditems")) {
-            sender.sendMessage(Component.text("Sorry, but you don't have permission to check registered items.").color(TextColor.color(255, 0, 0)));
+        if (lItems.isEmpty()) {
+            text.append("Сейчас нету загруженных предметов.");
+            toSend = Component.text(text.toString());
+            sender.sendMessage(toSend);
             return true;
         }
 
-        Map<String, CustomItem> lItems = ItemManager.getManager().getItems();
-        Component text = Component.text("List of reg items: ");
-        
-        if (lItems.isEmpty()) {
-            text.append(Component.text("Theres no registered items right now. [Use ItemManager.getManager().register(CustomItem) to register.]"));
-            sender.sendMessage(text);
-            return true;
-        }
+        text.append("Загруженные предметы: ");
 
         for (Entry<String, CustomItem> items : lItems.entrySet()) {
             CustomItem item = items.getValue();
             if (ItemManager.getManager().isItemBlocked(item)) {
-                text.append(Component.text(item.getId()).color(TextColor.color(255, 0, 0))).append(Component.text(" "));
+                text.append(ChatColor.RED + item.getId() + ChatColor.RESET + " ");
+                continue;
             }
-
-            text.append(Component.text(item.getId() + " "));
+            text.append(item.getId() + " ");
         }
         
-        sender.sendMessage(text);
+        toSend = Component.text(text.toString());
+        sender.sendMessage(toSend);
 
         return true;
     }

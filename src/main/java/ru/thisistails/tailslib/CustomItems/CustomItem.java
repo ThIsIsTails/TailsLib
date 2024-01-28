@@ -1,11 +1,17 @@
 package ru.thisistails.tailslib.CustomItems;
 
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import io.papermc.paper.event.player.PlayerInventorySlotChangeEvent;
+
 public interface CustomItem {
+
+    public boolean isHolding = false;
     
     /**
      * Айди которое использует сервер и другие плагины.
@@ -14,24 +20,28 @@ public interface CustomItem {
     /**
      * Отображаемое имя для игрока.
      */
-    public String getName();
+    public default String getName() { return "Default name for CustomItem.java"; }
     /**
      * Описание предмета
      */
-    public IDescBuilder getLore();
+    public default IDescBuilder getLore() { return new SimpleDescBuilder().addDesc("Just an item."); }
     /**
      * Тип предмета
      */
-    public Material getMaterial();
+    public @NotNull Material getMaterial();
 
     /**
      * Используется для настройки предмета майнкрафта.
      * @param current   Предмет.
      * @apiNote         Предмет уже имеет встроенный ID, имя и лор.
      */
-    public default ItemStack getImprovedItemStack(ItemStack current) { return current; }
+    public default @NotNull ItemStack getImprovedItemStack(ItemStack current) { return current; }
 
     public default void leftClick(PlayerInteractEvent event) {}
     public default void rightClick(PlayerInteractEvent event) {}
+    public default void itemDamagedEntity(EntityDamageByEntityEvent event) {}
+    
+    // public default void onHoldEvent(PlayerInventorySlotChangeEvent event) {}
+    // public default void onHoldEvent(Player player) {}
 
 }
