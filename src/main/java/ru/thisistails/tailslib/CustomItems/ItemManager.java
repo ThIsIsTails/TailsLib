@@ -91,12 +91,20 @@ public class ItemManager implements Listener {
         return blacklistedItems.contains(item);
     }
 
+    @SuppressWarnings("deprecation")
+    /*
+     * Papermc далбаёбы и не могут сделать нихуя нормально (:
+     * Эта хуйня на Component не хочет делать новые линии
+     * и заменяет их ебаным хер пойми чем.
+     * 
+     * Проще после такого на Spigot перейти и не ебаться.
+     */
     public ItemStack createItem(CustomItem item) {
         ItemStack itemstack = new ItemStack(item.getMaterial());
         ItemMeta meta = itemstack.getItemMeta();
 
         meta.displayName(Component.text(ChatColor.translateAlternateColorCodes('&', item.getName())));
-        meta.lore(item.getLore().build());
+        meta.setLore(item.getLore().build());
         meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, item.getId());
         itemstack.setItemMeta(meta);
 
@@ -113,6 +121,9 @@ public class ItemManager implements Listener {
     public void clicks(PlayerInteractEvent event) {
         
         ItemStack item = event.getItem();
+
+        if (item == null)
+            return;
 
         if (item.getItemMeta() != null && item.getItemMeta().getPersistentDataContainer().has(key, PersistentDataType.STRING)) {
             String itemID = item.getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING);
@@ -147,7 +158,7 @@ public class ItemManager implements Listener {
 
         String heldItemID, offHandHeldItemID;
 
-        if (heldItem.getItemMeta() != null && heldItem.getItemMeta().getPersistentDataContainer().has(key, PersistentDataType.STRING)) {
+        if (heldItem != null && heldItem.getItemMeta() != null && heldItem.getItemMeta().getPersistentDataContainer().has(key, PersistentDataType.STRING)) {
             heldItemID = heldItem.getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING);
             CustomItem citem = items.get(heldItemID);
             if (citem == null) {
@@ -157,7 +168,7 @@ public class ItemManager implements Listener {
             }
         }
 
-        if (offHandHeldItem.getItemMeta() != null && offHandHeldItem.getItemMeta().getPersistentDataContainer().has(key, PersistentDataType.STRING)) {
+        if (offHandHeldItem != null && offHandHeldItem.getItemMeta() != null && offHandHeldItem.getItemMeta().getPersistentDataContainer().has(key, PersistentDataType.STRING)) {
             offHandHeldItemID = offHandHeldItem.getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING);
             CustomItem citem = items.get(offHandHeldItemID);
             if (citem == null) {
