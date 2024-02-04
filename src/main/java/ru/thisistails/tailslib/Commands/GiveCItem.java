@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import ru.thisistails.tailslib.CustomItems.CustomItem;
 import ru.thisistails.tailslib.CustomItems.ItemManager;
 import ru.thisistails.tailslib.Tools.CommandsHelper;
-import ru.thisistails.tailslib.Tools.Debug;
 
 public class GiveCItem implements CommandExecutor {
 

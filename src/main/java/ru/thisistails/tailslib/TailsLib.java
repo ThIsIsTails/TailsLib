@@ -8,7 +8,6 @@ import ru.thisistails.tailslib.Commands.SettingsCommand;
 import ru.thisistails.tailslib.CustomItems.ItemManager;
 import ru.thisistails.tailslib.Items.SimpleItem;
 import ru.thisistails.tailslib.Tools.Config;
-import ru.thisistails.tailslib.Tools.YAMLManager;
 
 public class TailsLib extends JavaPlugin {
 
@@ -18,7 +17,6 @@ public class TailsLib extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        YAMLManager.setup();
         Config.reloadConfig();
 
         ItemManager itemManager = ItemManager.getManager();

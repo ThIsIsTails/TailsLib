@@ -1,13 +1,10 @@
 package ru.thisistails.tailslib.CustomItems;
 
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import io.papermc.paper.event.player.PlayerInventorySlotChangeEvent;
 
 public interface CustomItem {
 
