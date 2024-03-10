@@ -1,4 +1,4 @@
-package ru.thisistails.tailslib.CustomItems;
+package ru.thisistails.tailslib.Utils.Description;
 
 import java.util.List;
 

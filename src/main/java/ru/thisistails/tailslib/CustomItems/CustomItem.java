@@ -1,31 +1,15 @@
 package ru.thisistails.tailslib.CustomItems;
 
-import org.bukkit.Material;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public interface CustomItem {
+import ru.thisistails.tailslib.CustomItems.Data.CustomItemData;
 
-    public boolean isHolding = false;
+public interface CustomItem {
     
-    /**
-     * Айди которое использует сервер и другие плагины.
-     */
-    public @NotNull String getId();
-    /**
-     * Отображаемое имя для игрока.
-     */
-    public default String getName() { return "Default name for CustomItem.java"; }
-    /**
-     * Описание предмета
-     */
-    public default IDescBuilder getLore() { return new SimpleDescBuilder().addDesc("Just an item."); }
-    /**
-     * Тип предмета
-     */
-    public @NotNull Material getMaterial();
+    public @NotNull CustomItemData getItemData();
 
     /**
      * Используется для настройки предмета майнкрафта.

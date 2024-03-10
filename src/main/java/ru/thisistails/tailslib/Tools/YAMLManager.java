@@ -13,26 +13,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import net.md_5.bungee.api.ChatColor;
 
 public class YAMLManager {
-    
-    //private static File locFile;
 
     private static Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");
-
-    // public static void setup() {
-
-    //     Bukkit.getPluginManager().getPlugin("TailsLib").getDataFolder().mkdir();
-
-    //     locFile = new File(Bukkit.getPluginManager().getPlugin("TailsLib").getDataFolder() + "/config.yml");
-    //     if (!locFile.exists()) {
-    //         try {
-    //             //locFile.mkdir();
-    //             Bukkit.getPluginManager().getPlugin("TailsLib").saveResource("config.yml", false);
-    //         } catch (IllegalArgumentException e) {
-    //             e.printStackTrace();
-    //             return;
-    //         }
-    //     }
-    // }
 
     /**
      * Запрос на определённый файл yml по определённуму пути.

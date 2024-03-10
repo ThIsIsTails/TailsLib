@@ -1,17 +1,22 @@
 package ru.thisistails.tailslib.Commands;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import ru.thisistails.tailslib.CustomItems.CustomItem;
-import ru.thisistails.tailslib.CustomItems.ItemManager;
+import ru.thisistails.tailslib.CustomItems.CustomItemManager;
 import ru.thisistails.tailslib.Tools.CommandsHelper;
 
-public class GiveCItem implements CommandExecutor {
+public class GiveCItem implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command arg1, @NotNull String arg2, @NotNull String[] args) {
@@ -36,7 +41,7 @@ public class GiveCItem implements CommandExecutor {
             return true;
         }
 
-        ItemManager manager = ItemManager.getManager();
+        CustomItemManager manager = CustomItemManager.getManager();
         CustomItem citem = manager.getItemByID(itemID);
 
         if (citem == null) {
@@ -50,6 +55,16 @@ public class GiveCItem implements CommandExecutor {
         sender.sendMessage("Успешно выдан " + itemID);
 
         return true;
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command arg1, @NotNull String arg2, @NotNull String[] args) {
+        List<String> toReturn = new ArrayList<>();
+        toReturn.addAll(CustomItemManager.getManager().getItems().keySet());
+
+        if (args.length == 1)
+            return toReturn;
+        else return null;
     }
     
 }

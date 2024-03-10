@@ -15,7 +15,7 @@ public class ChatTools {
 
     public static void sendAll(String message) {
         for (Player player : Bukkit.getServer().getOnlinePlayers())
-            player.sendMessage(message);
+            player.sendMessage(translateString(message));
     }
 
     /**
