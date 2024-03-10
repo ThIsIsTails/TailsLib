@@ -1,8 +1,10 @@
 package ru.thisistails.tailslib.CustomItems;
 
+import org.bukkit.NamespacedKey;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
 
 import ru.thisistails.tailslib.CustomItems.Data.CustomItemData;
@@ -21,6 +23,8 @@ public interface CustomItem {
     public default void leftClick(PlayerInteractEvent event) {}
     public default void rightClick(PlayerInteractEvent event) {}
     public default void itemDamagedEntity(EntityDamageByEntityEvent event) {}
+
+    public default Recipe recipe(NamespacedKey key) { return null; }
     
     // public default void onHoldEvent(PlayerInventorySlotChangeEvent event) {}
     // public default void onHoldEvent(Player player) {}

@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
@@ -49,6 +50,15 @@ public class CustomItemManager {
                 Bukkit.getLogger().warning("[ItemManager] " + "Item with ID: " + id + " in blacklist but still registering.");
             }
         }
+
+        Bukkit.getLogger().info("Adding recipe for " + id);
+        Recipe recipe = item.recipe(new NamespacedKey(Bukkit.getPluginManager().getPlugin("TailsLib"), id + "_recipe"));
+        if (recipe != null) {
+            Bukkit.addRecipe(recipe);
+            Bukkit.getLogger().info("Added recipe for " + id + ", finishing.");
+        }
+        else
+            Bukkit.getLogger().info(id + " returned null as a recipe, skipping.");
 
         items.put(id, item);
 
