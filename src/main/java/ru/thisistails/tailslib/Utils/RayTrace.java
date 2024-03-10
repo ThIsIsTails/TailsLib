@@ -12,19 +12,20 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 /**
  * Помошник для рейтрейса объектов
  */
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class RayTrace {
 
     /**
      * Опции для рейтрейса существ
      */
     @Data
+    @AllArgsConstructor
     public class RayTraceEntitySettings {
         private List<Entity> ignore;
     }
@@ -33,6 +34,7 @@ public class RayTrace {
      * Опции для частиц
      */
     @Data
+    @AllArgsConstructor
     public class RayTraceParticleSettings {
         private Particle particleType;
         private int amount;
@@ -43,6 +45,7 @@ public class RayTrace {
      * Опции для рейтрейса блоков
      */
     @Data
+    @AllArgsConstructor
     public class RayTraceBlockSettings {
         private FluidCollisionMode fluidCollisionMode;
         private boolean ignorePassableBlocks;
