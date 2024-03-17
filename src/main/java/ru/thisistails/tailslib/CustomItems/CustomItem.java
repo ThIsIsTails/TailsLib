@@ -24,7 +24,7 @@ public interface CustomItem {
     public default void rightClick(PlayerInteractEvent event) {}
     public default void itemDamagedEntity(EntityDamageByEntityEvent event) {}
 
-    public default Recipe recipe(NamespacedKey key) { return null; }
+    public default Recipe recipe(NamespacedKey key, ItemStack item) { return null; }
     
     // public default void onHoldEvent(PlayerInventorySlotChangeEvent event) {}
     // public default void onHoldEvent(Player player) {}

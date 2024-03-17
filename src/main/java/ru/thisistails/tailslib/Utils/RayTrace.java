@@ -26,7 +26,7 @@ public class RayTrace {
      */
     @Data
     @AllArgsConstructor
-    public class RayTraceEntitySettings {
+    public static class RayTraceEntitySettings {
         private List<Entity> ignore;
     }
 
@@ -35,7 +35,7 @@ public class RayTrace {
      */
     @Data
     @AllArgsConstructor
-    public class RayTraceParticleSettings {
+    public static class RayTraceParticleSettings {
         private Particle particleType;
         private int amount;
         private DustOptions dustOptions;
@@ -46,7 +46,7 @@ public class RayTrace {
      */
     @Data
     @AllArgsConstructor
-    public class RayTraceBlockSettings {
+    public static class RayTraceBlockSettings {
         private FluidCollisionMode fluidCollisionMode;
         private boolean ignorePassableBlocks;
     }

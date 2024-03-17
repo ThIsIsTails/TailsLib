@@ -52,7 +52,7 @@ public class CustomItemManager {
         }
 
         Bukkit.getLogger().info("Adding recipe for " + id);
-        Recipe recipe = item.recipe(new NamespacedKey(Bukkit.getPluginManager().getPlugin("TailsLib"), id + "_recipe"));
+        Recipe recipe = item.recipe(new NamespacedKey(Bukkit.getPluginManager().getPlugin("TailsLib"), id + "_recipe"), createItem(item));
         if (recipe != null) {
             Bukkit.addRecipe(recipe);
             Bukkit.getLogger().info("Added recipe for " + id + ", finishing.");
