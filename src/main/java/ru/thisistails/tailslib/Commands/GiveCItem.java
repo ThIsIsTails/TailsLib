@@ -18,6 +18,7 @@ import ru.thisistails.tailslib.Tools.CommandsHelper;
 
 public class GiveCItem implements CommandExecutor, TabCompleter {
 
+    @SuppressWarnings("null")
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command arg1, @NotNull String arg2, @NotNull String[] args) {
         if (args.length == 0) {

@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import lombok.Getter;
@@ -37,6 +38,19 @@ public class CustomItemManager {
             instance = new CustomItemManager();
         
         return instance;
+    }
+
+    public static String tryGetIDFromItemStack(ItemStack item) {
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null)
+            return null;
+        
+        String id = item.getItemMeta().getPersistentDataContainer().get(getManager().getCustomItemKey(), PersistentDataType.STRING);
+        return id;
+    }
+
+    public static CustomItem tryGetCItemFromItemStack(ItemStack item) {
+        return getManager().getItemByID(tryGetIDFromItemStack(item));
     }
 
     public void register(CustomItem item) {
@@ -103,12 +117,20 @@ public class CustomItemManager {
      * 
      * Проще после такого на Spigot перейти и не ебаться.
      */
-    public ItemStack createItem(CustomItem item) {
+    public ItemStack createItem(@NotNull CustomItem item) {
         ItemStack itemstack = new ItemStack(item.getItemData().getMaterial());
         ItemMeta meta = itemstack.getItemMeta();
 
         meta.displayName(Component.text(ChatColor.translateAlternateColorCodes('&', item.getItemData().getName())));
-        meta.setLore(item.getItemData().getLore().build());
+        List<String> lore = new ArrayList<>();
+        lore.addAll(item.getItemData().getLore().build());
+
+        item.getItemData().getFlags().forEach((flag) -> {
+            lore.add(flag.getLocalized());
+        });
+
+        meta.setLore(lore);
+
         meta.getPersistentDataContainer().set(customItemKey, PersistentDataType.STRING, item.getItemData().getId());
         itemstack.setItemMeta(meta);
 

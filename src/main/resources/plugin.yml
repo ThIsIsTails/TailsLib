@@ -13,9 +13,9 @@ commands:
   citem:
     usage: /citem [ID] (PLAYER)
     permission: tailslib.citem.give
-  cblock:
-    usage: /cblock [ID] (PLAYER)
-    permission: tailslib.cblock.give
+  cblockplaced:
+    usage: /cblockplaced [PLACE]
+    permission: tailslib.cblockplaced
   tailslib:
     usage: /tailslib [info|dlog (true|false)]
     permission: tailslib.settings

@@ -1,10 +1,11 @@
 package ru.thisistails.tailslib.CustomBlocks;
 
-import java.util.ArrayList;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -14,8 +15,10 @@ import org.jetbrains.annotations.Nullable;
 
 import lombok.Getter;
 import ru.thisistails.tailslib.CustomBlocks.Data.PlacedBlockData;
+import ru.thisistails.tailslib.CustomItems.CustomItem;
+import ru.thisistails.tailslib.Tools.ChatTools;
 
-public class CustomBlockManager {
+public class CustomBlockManager implements Serializable {
 
     private static @Getter CustomBlockManager instance;
 
@@ -26,13 +29,7 @@ public class CustomBlockManager {
     }
 
     private @Getter Map<String, CustomBlock> blocks;
-
-    private @Getter List<PlacedBlockData> placedBlocks = new ArrayList<>();
-
-    public void setPlacedBlocks(List<PlacedBlockData> datas) {
-        Bukkit.getLogger().warning("Something want to rewrite PlacedBlock datas.");
-        placedBlocks = datas;
-    }
+    private @Getter PlacedBlocks placedBlocks = new PlacedBlocks();
 
     private CustomBlockManager() {
         blocks = new HashMap<>();
@@ -48,30 +45,72 @@ public class CustomBlockManager {
         Bukkit.getLogger().info("Custom block " + block.getData().getBlockId() + " registered.");
     }
 
-    public boolean registerPlacedBlockData(PlacedBlockData data) {
-        if (placedBlocks.contains(data)) {
-            Bukkit.getLogger().warning(data.toString() + " already exists. Skipping...");
-            return false;
-        }
+    public void loadBlocks() {
+        Thread thread = new Thread(new Runnable() {
 
-        return placedBlocks.add(data);
+            @Override
+            public void run() {
+                // Нужно чтобы сервер успел загрузить блоки
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                placedBlocks = PlacedBlocks.load();
+        
+                if (placedBlocks == null) {
+                    Bukkit.getLogger().info("Failed to load placed blocks.");
+                    placedBlocks = new PlacedBlocks();
+                }
+            }
+        });
+
+        thread.start();
     }
 
-    public boolean placeBlock(@NotNull CustomBlock block, @NotNull Location location, @Nullable UUID owner) {
+    public void savePlacedBlocksDatas() {
+        try {
+            placedBlocks.save();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Bukkit.getLogger().severe("Failed to save PlacedBlocks.");
+            ChatTools.sendAll("Неудалось сохранить PlacedBlocks. " + e.getMessage());
+        }
+    }
+
+    public void registerPlacedBlockData(PlacedBlockData data) {
+        if (placedBlocks.containsPlacedBlock(data)) {
+            Bukkit.getLogger().warning(data.toString() + " already exists. Skipping...");
+            return;
+        }
+
+        placedBlocks.addPlacedBlock(data);
+    }
+
+    public void placeBlock(@NotNull CustomBlock block, @NotNull Location location, @Nullable UUID owner) {
         location.getBlock().setType(block.getData().getBlockMaterial());
 
         PlacedBlockData data = new PlacedBlockData(location, block);
         data.setOwnerUuid(owner);
-        return registerPlacedBlockData(data);
+        registerPlacedBlockData(data);
     }
 
     public boolean removePlacedBlock(PlacedBlockData data) {
-        if (!placedBlocks.contains(data))
+        if (!placedBlocks.containsPlacedBlock(data))
             return false; // Это чтобы не менять блоки просто так
         
         data.getLocation().getBlock().setType(Material.AIR);
-        placedBlocks.remove(data);
+        placedBlocks.removePlacedBlock(data);
         return true;
+    }
+
+    public @Nullable CustomBlock getCustomBlockByCustomItem(CustomItem item) {
+        for (CustomBlock cblock : blocks.values()) {
+            if (cblock.getData().getItem() == item)
+                return cblock;
+        }
+
+        return null;
     }
     
 }

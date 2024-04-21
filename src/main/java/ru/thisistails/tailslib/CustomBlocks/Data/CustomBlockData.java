@@ -1,6 +1,5 @@
 package ru.thisistails.tailslib.CustomBlocks.Data;
 
-
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,5 +12,6 @@ public class CustomBlockData {
     private @NotNull CustomItem item;
     private @NotNull String blockId;
     private @NotNull Material blockMaterial;
+    private boolean dropItem = true;
 
 }
