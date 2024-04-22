@@ -7,13 +7,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.enchantment.EnchantItemEvent;
+import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.persistence.PersistentDataType;
 
 import ru.thisistails.tailslib.Tools.Debug;
@@ -33,25 +30,7 @@ public class CustomItemListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onCraft(CraftItemEvent event) {
-        Recipe recipe = event.getRecipe();
-
-        if (recipe instanceof ShapedRecipe) {
-            // for (RecipeChoice item : ((ShapedRecipe) recipe).getChoiceMap().values()) {
-            //     item.and(i -> {
-            //         CustomItem citem = CustomItemManager.tryGetCItemFromItemStack(i);
-            //         if (citem == null) continue;
-    
-            //         if (citem.getItemData().getFlags().contains(CustomItemFlag.AsUniqueMaterial)) {
-            //             event.setCancelled(true);
-            //         }
-            //     });
-            // }
-        }
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onEnchant(EnchantItemEvent event) {
+    public void onEnchant(PrepareItemEnchantEvent event) {
         CustomItem citem = CustomItemManager.tryGetCItemFromItemStack(event.getItem());
 
         if (citem == null) return;

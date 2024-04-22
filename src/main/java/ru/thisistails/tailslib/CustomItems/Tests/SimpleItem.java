@@ -1,8 +1,5 @@
 package ru.thisistails.tailslib.CustomItems.Tests;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.bukkit.Material;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.jetbrains.annotations.NotNull;
@@ -29,11 +26,12 @@ public class SimpleItem implements CustomItem {
 
     @Override
     public @NotNull CustomItemData getItemData() {
+        CustomItemFlag[] flags = {
+            CustomItemFlag.NoEchants
+        };
 
-        List<CustomItemFlag> flags = new ArrayList<>();
-        flags.add(CustomItemFlag.AsUniqueMaterial);
-
-        CustomItemData data = new CustomItemData("testitem", "Простой тестовый предмет", new SimpleDescBuilder().addDesc("Простой предмет."), Material.STICK, flags);
+        CustomItemData data = new CustomItemData("testitem", "Простой тестовый предмет", new SimpleDescBuilder().addDesc("Простой предмет."), Material.IRON_AXE);
+        data.setFlags(flags);
 
         return data;
     }

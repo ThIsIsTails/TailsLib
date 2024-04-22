@@ -1,7 +1,5 @@
 package ru.thisistails.tailslib.CustomItems.Tests;
 
-import java.util.ArrayList;
-
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,7 +11,7 @@ public class SimpleCustomBlockItem implements CustomItem {
 
     @Override
     public @NotNull CustomItemData getItemData() {
-        CustomItemData customItemData = new CustomItemData("simplecustomitemforblock", "Простой блок", new SimpleDescBuilder().setOther("Thug shaker central"), Material.GLASS, new ArrayList<>());
+        CustomItemData customItemData = new CustomItemData("simplecustomitemforblock", "Простой блок", new SimpleDescBuilder().setOther("Thug shaker central"), Material.GLASS);
         return customItemData;
     }
     
