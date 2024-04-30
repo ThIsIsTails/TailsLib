@@ -46,6 +46,19 @@ public class Cooldown<T> {
     }
 
     /**
+     * Отправляет T в кулдаун.
+     * @param arg       Аргумент который отправлять в кд
+     * @param seconds   Секунды (уже умножены на 20 для тиков)
+     * @param runnable  Что будет выполнено после того как выйдет время.
+     */
+    public void addNewCooldown(T arg, long seconds, BukkitRunnable runnable) {
+        seconds = seconds * 20;
+        Plugin plugin = Bukkit.getPluginManager().getPlugin("TailsLib");
+
+        cooldowns.put(arg, runnable.runTaskLater(plugin, seconds));
+    }
+
+    /**
      * Убирает T из кулдауна.
      * @param arg   Аргумент типа T который находится в списке.
      */
