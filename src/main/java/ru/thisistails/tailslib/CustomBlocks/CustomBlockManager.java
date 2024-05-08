@@ -17,6 +17,7 @@ import lombok.Getter;
 import ru.thisistails.tailslib.CustomBlocks.Data.PlacedBlockData;
 import ru.thisistails.tailslib.CustomItems.CustomItem;
 import ru.thisistails.tailslib.Tools.ChatTools;
+import ru.thisistails.tailslib.Tools.Config;
 
 public class CustomBlockManager implements Serializable {
 
@@ -52,7 +53,7 @@ public class CustomBlockManager implements Serializable {
             public void run() {
                 // Нужно чтобы сервер успел загрузить блоки
                 try {
-                    TimeUnit.SECONDS.sleep(1);
+                    TimeUnit.SECONDS.sleep(Config.getConfig().getInt("waitBeforeLoadBlocks"));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

@@ -66,12 +66,15 @@ public class CustomBlockListener implements Listener {
         Player player = event.getPlayer();
         Action action = event.getAction();
 
-        if (action == Action.RIGHT_CLICK_BLOCK && event.getHand().equals(EquipmentSlot.HAND) && event.getItem() == null) {
+        if (action == Action.RIGHT_CLICK_BLOCK) {
             PlacedBlockData data = CustomBlockManager.getInstance().getPlacedBlocks().searchPlacedBlockData(event.getClickedBlock().getLocation());
 
             if (data == null) return;
 
-            data.getPlacedBlock().onRightClickOnBlock(player);
+            if (event.getHand().equals(EquipmentSlot.HAND) && event.getItem() != null)
+                data.getPlacedBlock().onRightClickOnBlockWithItem(player, event.getItem());
+            else
+                data.getPlacedBlock().onRightClearClickOnBlock(player);
         }
     }
 }

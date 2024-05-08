@@ -21,7 +21,7 @@ public class TestBlock implements CustomBlock {
     }
 
     @Override
-    public void onRightClickOnBlock(Player player) {
+    public void onRightClearClickOnBlock(Player player) {
         player.sendMessage("Yo, how r u?");
     }
 

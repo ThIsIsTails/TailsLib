@@ -3,6 +3,7 @@ package ru.thisistails.tailslib.CustomBlocks;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import com.google.gson.JsonElement;
@@ -15,7 +16,17 @@ public interface CustomBlock {
 
     public default void onCreation(BlockPlaceEvent event) {}
     public default void onDestroy(BlockBreakEvent event) {}
-    public default void onRightClickOnBlock(Player player) {}
+
+    /**
+     * При клике на блок без предметов.
+     * @param player    Автор клика
+     */
+    public default void onRightClearClickOnBlock(Player player) {}
+    /**
+     * При клике на блок с предметом
+     * @param player    Автор клика
+     */
+    public default void onRightClickOnBlockWithItem(Player player, ItemStack item) {}
 
     /**
      * Вызывается при сохранении сервера.
