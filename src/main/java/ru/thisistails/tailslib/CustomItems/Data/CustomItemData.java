@@ -31,4 +31,8 @@ public class CustomItemData {
         return Arrays.asList(flags);
     }
 
+    public void setFlags(CustomItemFlag... flags) {
+        this.flags = flags;
+    }
+
 }

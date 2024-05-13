@@ -53,6 +53,14 @@ public class CustomItemManager {
         return getManager().getItemByID(tryGetIDFromItemStack(item));
     }
 
+    public static @Nullable ItemStack createItemFromID(String id) {
+        CustomItemManager manager = getManager();
+
+        if (manager.getItemByID(id) == null) return null;
+
+        return manager.createItem(manager.getItemByID(id));
+    }
+
     public void register(CustomItem item) {
         String id = item.getItemData().getId();
 
