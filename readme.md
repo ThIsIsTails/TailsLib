@@ -18,6 +18,10 @@ Blocks that remain in your world even after a reboot and can offer basic needs i
 ## Custom effects with more functionality (Save system in WIP)
 Create new effects without pain (almost)
 
+# Maven & Gradle
+
+Still searching for host (:
+
 # How to use it
 
 Simply implement tailslib interface into your class.
