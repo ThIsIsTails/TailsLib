@@ -1,11 +1,15 @@
 package ru.thisistails.tailslib.CustomBlocks;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -16,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import lombok.Getter;
 import ru.thisistails.tailslib.CustomBlocks.Data.PlacedBlockData;
 import ru.thisistails.tailslib.CustomItems.CustomItem;
-import ru.thisistails.tailslib.Tools.ChatTools;
+import ru.thisistails.tailslib.Exceptions.IDPatternException;
 import ru.thisistails.tailslib.Tools.Config;
 
 public class CustomBlockManager implements Serializable {
@@ -31,6 +35,7 @@ public class CustomBlockManager implements Serializable {
 
     private @Getter Map<String, CustomBlock> blocks;
     private @Getter PlacedBlocks placedBlocks = new PlacedBlocks();
+    private Pattern idPattern = Pattern.compile("^[a-z_]+$");
 
     private CustomBlockManager() {
         blocks = new HashMap<>();
@@ -42,11 +47,19 @@ public class CustomBlockManager implements Serializable {
             return;
         }
 
+        String id = block.getData().getBlockId();
+
+        Matcher matcher = idPattern.matcher(id);
+
+        if (!matcher.find())
+            throw new IDPatternException(id + " is not matching pattern " + idPattern.pattern());
+
         blocks.put(block.getData().getBlockId(), block);
         Bukkit.getLogger().info("Custom block " + block.getData().getBlockId() + " registered.");
     }
 
     public void loadBlocks() {
+        Bukkit.getLogger().info("[BlockManager] Called block loading. Waiting " + String.valueOf(Config.getConfig().getInt("waitBeforeLoadBlocks")) + " before loading.");
         Thread thread = new Thread(new Runnable() {
 
             @Override
@@ -70,12 +83,18 @@ public class CustomBlockManager implements Serializable {
     }
 
     public void savePlacedBlocksDatas() {
+        Logger logger = Bukkit.getLogger();
+        
         try {
+            File file = new File(PlacedBlocks.getSaveFilePath());
+            if (!file.exists()) {
+                if (!file.createNewFile()) 
+                    logger.warning("Failed to create save file: " + file.getPath());
+            }
             placedBlocks.save();
         } catch (IOException e) {
+            logger.severe("An error occurred while saving placed blocks data: " + e.getMessage());
             e.printStackTrace();
-            Bukkit.getLogger().severe("Failed to save PlacedBlocks.");
-            ChatTools.sendAll("Неудалось сохранить PlacedBlocks. " + e.getMessage());
         }
     }
 
@@ -91,7 +110,7 @@ public class CustomBlockManager implements Serializable {
     public void placeBlock(@NotNull CustomBlock block, @NotNull Location location, @Nullable UUID owner) {
         location.getBlock().setType(block.getData().getBlockMaterial());
 
-        PlacedBlockData data = new PlacedBlockData(location, block);
+        PlacedBlockData data = new PlacedBlockData(UUID.randomUUID(), location, block);
         data.setOwnerUuid(owner);
         registerPlacedBlockData(data);
     }

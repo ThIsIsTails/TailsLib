@@ -12,44 +12,127 @@ import org.bukkit.entity.Player;
 import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
 
+/**
+ * Utility class for logging debug messages to players and the console.
+ * The class supports different logging levels: info, warn, and error.
+ * It also allows ignoring specific players from receiving debug messages.
+ */
 public class Debug {
 
-    private static final boolean consoleLogging, enabled;
-    private static final String prefix, info, warn, error;
+    // Configuration settings
+    private static final boolean consoleLogging;
+    private static final boolean enabled;
+    private static final boolean suppressErrors;
+    private static final String prefix;
+    private static final String info;
+    private static final String warn;
+    private static final String error;
 
+    // Set of players to be ignored for debug messages
     private static Set<Player> ignore = new HashSet<>();
 
+    // Static block to initialize configuration settings
     static {
         YamlConfiguration yaml = (YamlConfiguration) YAMLManager.require("TailsLib", "config.yml");
-        prefix = yaml.getString("debug.prefix");
-        consoleLogging = yaml.getBoolean("debug.console");
-        info = yaml.getString("debug.info");
-        warn = yaml.getString("debug.warn");
-        error = yaml.getString("debug.error");
-        enabled = yaml.getBoolean("debug.enabled");
-        if (enabled) Bukkit.getLogger().warning("Debug enabled.");
+        prefix = yaml.getString("debug.prefix", "[DEBUG]");
+        consoleLogging = yaml.getBoolean("debug.console", true);
+        info = yaml.getString("debug.info", "[INFO]");
+        warn = yaml.getString("debug.warn", "[WARN]");
+        error = yaml.getString("debug.error", "[ERROR]");
+        enabled = yaml.getBoolean("debug.enabled", true);
+        suppressErrors = yaml.getBoolean("debug.suppressErrors", false);
     }
 
-    public static boolean ignorePlayer(Player player) { return ignore.add(player); }
-    public static boolean stopIgnoringPlayer(Player player) { return ignore.remove(player); }
-    
+    /**
+     * Adds a player to the ignore list, preventing them from receiving debug messages.
+     * @param player The player to ignore.
+     * @return true if the player was successfully added to the ignore list, false if they were already ignored.
+     */
+    public static boolean ignorePlayer(Player player) {
+        return ignore.add(player);
+    }
+
+    /**
+     * Removes a player from the ignore list, allowing them to receive debug messages again.
+     * @param player The player to stop ignoring.
+     * @return true if the player was successfully removed from the ignore list, false if they were not being ignored.
+     */
+    public static boolean stopIgnoringPlayer(Player player) {
+        return ignore.remove(player);
+    }
+
+    /**
+     * Logs an info-level debug message to the specified player and/or console.
+     * @param player The player to send the message to, or null to only log to the console.
+     * @param message The message to log.
+     */
     public static void info(@Nullable Player player, String message) {
         if (!enabled) return;
 
-        if (player != null && !ignore.contains(player)) player.sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', String.format(prefix, info) + "&r " + message)));
-        if (consoleLogging) Bukkit.getLogger().info("[DEBUG] " + message);
+        String formattedMessage = ChatColor.translateAlternateColorCodes('&', String.format(prefix, info) + "&r " + message);
+        if (player != null && !ignore.contains(player)) {
+            player.sendMessage(Component.text(formattedMessage));
+        }
+        if (consoleLogging) {
+            Bukkit.getLogger().info("[DEBUG] " + message);
+        }
     }
 
-    public static void warn(Player player, String message) {
+    /**
+     * Logs an info-level debug message to the console.
+     * @param message The message to log.
+     */
+    public static void info(String message) {
+        info(null, message);
+    }
+
+    /**
+     * Logs a warning-level debug message to the specified player and/or console.
+     * @param player The player to send the message to, or null to only log to the console.
+     * @param message The message to log.
+     */
+    public static void warn(@Nullable Player player, String message) {
         if (!enabled) return;
 
-        if (player != null && !ignore.contains(player)) player.sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', String.format(prefix, warn) + "&r " + message)));
-        if (consoleLogging) Bukkit.getLogger().warning("[DEBUG] " + message);
+        String formattedMessage = ChatColor.translateAlternateColorCodes('&', String.format(prefix, warn) + "&r " + message);
+        if (player != null && !ignore.contains(player)) {
+            player.sendMessage(Component.text(formattedMessage));
+        }
+        if (consoleLogging) {
+            Bukkit.getLogger().warning("[DEBUG] " + message);
+        }
     }
 
-    public static void error(Player player, String message) {
-        if (player != null) player.sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', String.format(prefix, error) + "&r " + message)));
-        if (consoleLogging) Bukkit.getLogger().severe("[DEBUG] " + message);
+    /**
+     * Logs a warning-level debug message to the console.
+     * @param message The message to log.
+     */
+    public static void warn(String message) {
+        warn(null, message);
     }
 
+    /**
+     * Logs an error-level debug message to the specified player and/or console.
+     * @param player The player to send the message to, or null to only log to the console.
+     * @param message The message to log.
+     */
+    public static void error(@Nullable Player player, String message) {
+        if (suppressErrors) return;
+
+        String formattedMessage = ChatColor.translateAlternateColorCodes('&', String.format(prefix, error) + "&r " + message);
+        if (player != null) {
+            player.sendMessage(Component.text(formattedMessage));
+        }
+        if (consoleLogging) {
+            Bukkit.getLogger().severe("[DEBUG] " + message);
+        }
+    }
+
+    /**
+     * Logs an error-level debug message to the console.
+     * @param message The message to log.
+     */
+    public static void error(String message) {
+        error(null, message);
+    }
 }

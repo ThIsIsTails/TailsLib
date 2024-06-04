@@ -17,19 +17,22 @@ public class YAMLManager {
     private static Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");
 
     /**
-     * Запрос на определённый файл yml по определённуму пути.
-     * Если файла не существует то возьмёт и создаст этот файл а после вернёт как искомое.
+     * Requests a specific YAML file from a specified path.
+     * If the file does not exist, it will create the file and then return the requested configuration.
      *
-     * @param   filePath    путь к файлу без слэша в начале.
-     * @return              Запрошенный файл конфигурации.
+     * @param   pluginName  the name of the plugin.
+     * @param   filePath    the path to the file without a leading slash.
+     * @return              the requested configuration file.
      */
     public static FileConfiguration require(String pluginName, String filePath) {
 
+        // Create a new File object with the specified path
         File file = new File(Bukkit.getPluginManager().getPlugin(pluginName).getDataFolder() + "/" + filePath);
 
+        // If the file does not exist, save the resource from the plugin's jar
         if (!file.exists()) {
             try {
-                //locFile.mkdir();
+                // Save the resource to the file path without overwriting existing files
                 Bukkit.getPluginManager().getPlugin(pluginName).saveResource(filePath, false);
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
@@ -37,48 +40,55 @@ public class YAMLManager {
             }
         }
 
+        // Load and return the YAML configuration from the file
         return YamlConfiguration.loadConfiguration(file);
-
     }
 
     /**
-     * Не поддерживает HEX коды.
-     * @param filePath  Путь файла без слэша в начале
-     * @param path      Путь к списку в самом файле.
-     * @return          Список строк с заменой символа цвета
-     * @see             ChatColor
+     * Does not support HEX codes.
+     * @param pluginName the name of the plugin.
+     * @param filePath   the path to the file without a leading slash.
+     * @param path       the path to the list within the file.
+     * @return           a list of strings with color codes replaced.
+     * @see              ChatColor
      */
     public static List<String> getAndTranslate(String pluginName, String filePath, String path) {
+        // Get the YAML configuration
         YamlConfiguration config = (YamlConfiguration) require(pluginName, filePath);
         List<String> list = new ArrayList<String>();
 
-        for (String i : config.getStringList(path)) { list.add(ChatColor.translateAlternateColorCodes('&', i)); }
+        // Translate alternate color codes for each string in the list
+        for (String i : config.getStringList(path)) { 
+            list.add(ChatColor.translateAlternateColorCodes('&', i)); 
+        }
 
         return list;
     }
 
     /**
-     * Поддерживает HEX коды.
-     * @param filePath  Путь файла без слэша в начале
-     * @param path      Путь к строке в самом файле.
-     * @return          Строка с заменой символа цвета
-     * @see             ChatColor
+     * Supports HEX codes.
+     * @param pluginName the name of the plugin.
+     * @param filePath   the path to the file without a leading slash.
+     * @param path       the path to the string within the file.
+     * @return           a string with color codes replaced.
+     * @see              ChatColor
      */
     public static String getAndTranslateString(String pluginName, String filePath, String path) {
+        // Get the YAML configuration
         YamlConfiguration config = (YamlConfiguration) require(pluginName, filePath);
         String getted = config.getString(path);
 
+        // Replace HEX color codes with ChatColor equivalents
         Matcher match = pattern.matcher(getted);
         while (match.find()) {
             String color = getted.substring(match.start(), match.end());
             getted = getted.replace(color, ChatColor.of(color).toString());
             match = pattern.matcher(getted);
         }
+        // Translate alternate color codes and remove remaining '&' characters
         getted = ChatColor.translateAlternateColorCodes('&', getted);
         getted = getted.replaceAll("&", "");
 
         return getted;
     }
-
-
 }

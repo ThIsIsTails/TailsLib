@@ -33,6 +33,7 @@ public class PlacedBlocksSer implements JsonDeserializer<PlacedBlocks>, JsonSeri
         {
             "PlacedBlocks": [
                 {
+                    "uuid": "uuid"
                     "location": [x,y,z],
                     "locationWorld": "world",
                     "ownerUuid": "uuid",
@@ -46,6 +47,7 @@ public class PlacedBlocksSer implements JsonDeserializer<PlacedBlocks>, JsonSeri
        json.getAsJsonObject().get("placedBlocks").getAsJsonArray().iterator().forEachRemaining((element) -> {
             JsonObject obj = element.getAsJsonObject();
             JsonArray loc = obj.get("location").getAsJsonArray();
+            UUID uuid = UUID.fromString(obj.get("uuid").getAsString());
 
             CustomBlock placedBlock = CustomBlockManager.getInstance().getBlocks().get(obj.get("customblock").getAsString());
 
@@ -59,8 +61,10 @@ public class PlacedBlocksSer implements JsonDeserializer<PlacedBlocks>, JsonSeri
             //     placedBlock.onLoad(element);
             // }
 
+            Location location = new Location(Bukkit.getWorld(obj.get("locationWorld").getAsString()), loc.get(0).getAsInt(), loc.get(1).getAsInt(), loc.get(2).getAsInt());
             PlacedBlockData pl = new PlacedBlockData(
-            new Location(Bukkit.getWorld(obj.get("locationWorld").getAsString()), loc.get(0).getAsInt(), loc.get(1).getAsInt(), loc.get(2).getAsInt() ),
+            uuid,
+            location,
             placedBlock);
 
             pl.setOwnerUuid(UUID.fromString(obj.get("ownerUuid").getAsString()));
@@ -79,6 +83,7 @@ public class PlacedBlocksSer implements JsonDeserializer<PlacedBlocks>, JsonSeri
         src.getPlacedBlocks().iterator().forEachRemaining((block) -> {
             JsonObject obj = new JsonObject();
             JsonArray loc = new JsonArray();
+            obj.addProperty("uuid", block.getUuid().toString());
             loc.add(block.getLocation().getX());
             loc.add(block.getLocation().getY());
             loc.add(block.getLocation().getZ());

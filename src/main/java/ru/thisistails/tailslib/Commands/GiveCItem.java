@@ -14,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 
 import ru.thisistails.tailslib.CustomItems.CustomItem;
 import ru.thisistails.tailslib.CustomItems.CustomItemManager;
-import ru.thisistails.tailslib.Tools.CommandsHelper;
 
 public class GiveCItem implements CommandExecutor, TabCompleter {
 
@@ -25,7 +24,7 @@ public class GiveCItem implements CommandExecutor, TabCompleter {
             return false;
         }
 
-        if (args.length == 1 && !CommandsHelper.isNotConsoleUser(sender, "You cant use this command this way."))
+        if (args.length == 1 && !(sender instanceof Player))
             return false;
 
         boolean giveToAnotherPlayer = args.length == 2;
@@ -42,16 +41,15 @@ public class GiveCItem implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        CustomItemManager manager = CustomItemManager.getManager();
-        CustomItem citem = manager.getItemByID(itemID);
+        CustomItem citem = CustomItemManager.getItemByID(itemID);
 
         if (citem == null) {
             sender.sendMessage("Предмета с ID " + itemID +" не существует.");
             return true;
         }
 
-        if (giveToAnotherPlayer) toPlayer.getInventory().addItem(manager.createItem(citem));
-        else ((Player) sender).getInventory().addItem(manager.createItem(citem));
+        if (giveToAnotherPlayer) toPlayer.getInventory().addItem(CustomItemManager.createItem(citem));
+        else ((Player) sender).getInventory().addItem(CustomItemManager.createItem(citem));
 
         sender.sendMessage("Успешно выдан " + itemID);
 

@@ -15,7 +15,7 @@ public class PBlocksCommand implements CommandExecutor {
         StringBuffer buffer = new StringBuffer();
 
         if (args.length == 0)
-            buffer.append("Всего блоков подгружено: " + String.valueOf(CustomBlockManager.getInstance().getPlacedBlocks().getPlacedBlocks().size()) );
+            buffer.append("Total blocks loaded: " + String.valueOf(CustomBlockManager.getInstance().getPlacedBlocks().getPlacedBlocks().size()) );
         else {
             int place = Integer.valueOf(args[0]) - 1;
 
@@ -23,7 +23,7 @@ public class PBlocksCommand implements CommandExecutor {
             try {
                 data = CustomBlockManager.getInstance().getPlacedBlocks().getPlacedBlocks().get(place);
             } catch (IndexOutOfBoundsException e) {
-                sender.sendMessage(args[0] + " не существует.");
+                sender.sendMessage(args[0] + " not found/dont exists.");
                 return true;
             }
             buffer.append(args[0] + ": ");

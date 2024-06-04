@@ -1,28 +1,21 @@
 package ru.thisistails.tailslib.CustomItems;
 
-import lombok.Getter;
-import ru.thisistails.tailslib.Tools.ChatTools;
-
 /**
- * Позволяет назначить доп. настройки для предмета.
+ * Enum representing various flags that can be applied to custom items.
  */
 public enum CustomItemFlag {
     /**
-     * Отключает любые действия с предметом
-     */ 
-    DisableActions(ChatTools.translateString("&8Взаимодействия с миров отключены")),
-    /**
-     *  Отключает PVP с этим предметом
-    */
-    NoPVP(ChatTools.translateString("&8Не наносит урон игрокам")),
-    /**
-     * Отключает чары у предмета
+     * Flag to disable actions for the custom item.
      */
-    NoEchants(ChatTools.translateString("&8Не может быть зачарован"));
-
-    private @Getter String localized;
-
-    CustomItemFlag(String localized) {
-        this.localized = localized;
-    }
+    DisableActions,
+    
+    /**
+     * Flag to prevent the custom item from being used in Player vs Player (PVP) combat.
+     */
+    NoPVP,
+    
+    /**
+     * Flag to prevent the custom item from being enchanted.
+     */
+    NoEchants;
 }

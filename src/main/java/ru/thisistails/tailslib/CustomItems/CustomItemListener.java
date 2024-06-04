@@ -9,25 +9,21 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import ru.thisistails.tailslib.Localization;
 import ru.thisistails.tailslib.Tools.Debug;
 
 public class CustomItemListener implements Listener {
 
     private static final CustomItemManager manager = CustomItemManager.getManager();
 
-    private static CustomItemListener listener;
-
-    private CustomItemListener() {}
-
-    public static CustomItemListener getListener() {
-        if (listener == null) listener = new CustomItemListener();
-
-        return listener;
-    }
+    public CustomItemListener() {}
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onEnchant(PrepareItemEnchantEvent event) {
@@ -43,40 +39,73 @@ public class CustomItemListener implements Listener {
     public void clicks(PlayerInteractEvent event) {
         
         ItemStack item = event.getItem();
+        Action action = event.getAction();
 
         if (item == null)
             return;
 
-        if (item.getItemMeta() != null && item.getItemMeta().getPersistentDataContainer().has(manager.getCustomItemKey(), PersistentDataType.STRING)) {
+        ItemMeta meta = item.getItemMeta();
+        // Проверяем предмет на ключ и берём ID если есть
+        if (meta != null && meta.getPersistentDataContainer().has(manager.getCustomItemKey(), PersistentDataType.STRING)) {
             String itemID = item.getItemMeta().getPersistentDataContainer().get(manager.getCustomItemKey(), PersistentDataType.STRING);
             CustomItem citem = manager.getItems().get(itemID);
 
             if (citem == null) {
-                Debug.error(event.getPlayer(), "Предмет " + itemID + " не зарегистрирован. (Предмет игрока: " + event.getPlayer() + ")");
+                // Пишем, что предмет использует TailsLib, но он не зарегистрирован в нём.
+                Debug.error(event.getPlayer(), Localization.prefix + " " + Localization.itemNotRegistered
+                    .replace("%player%", event.getPlayer().getName())
+                    .replace("%customitem_id%", itemID)
+                );
                 return;
             }
 
-            if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
-                List<CustomItemFlag> flags = citem.getItemData().getFlags();
-                
+            // Получаем флаги после того как уверены в том что предмет вообще есть.
+            List<CustomItemFlag> flags = citem.getItemData().getFlags();
+
+            if (action.equals(Action.LEFT_CLICK_AIR) || action.equals(Action.LEFT_CLICK_BLOCK)) {
                 if (flags.contains(CustomItemFlag.DisableActions)) {
                     event.setCancelled(true);
                 }
-                citem.leftClick(event);
+                citem.leftClick(event, CustomItemManager.getUUIDFromCustomItem(item));
                 return;
             }
 
-            if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                List<CustomItemFlag> flags = citem.getItemData().getFlags();
-                
+            if (action.equals(Action.RIGHT_CLICK_AIR) || action.equals(Action.RIGHT_CLICK_BLOCK)) {
                 if (flags.contains(CustomItemFlag.DisableActions)) {
                     event.setCancelled(true);
                 }
-                citem.rightClick(event);
+                citem.rightClick(event, CustomItemManager.getUUIDFromCustomItem(item));
                 return;
             }
         }
 
+    }
+
+    @EventHandler
+    public void onCraft(CraftItemEvent event) {
+        // Проверка на "уникальные" материалы
+        for (ItemStack ingredient : event.getInventory().getMatrix()) {
+            if (ingredient == null) continue;
+            CustomItem citem = CustomItemManager.tryGetCItemFromItemStack(ingredient);
+            if (citem == null) continue;
+            if (citem != null && citem.getItemData().isAsUniqueMaterial()) {
+                // Если предмет содержит запрещенный материал, отменяем событие крафта
+                event.setCancelled(true);
+                return;
+            }
+        }
+    }
+
+    @EventHandler
+    public void checkItem(InventoryClickEvent event) {
+        if (event.getCurrentItem() == null) return;
+        CustomItem item = CustomItemManager.tryGetCItemFromItemStack(event.getCurrentItem());
+        if (item == null) return;
+
+        if (CustomItemManager.getUUIDFromCustomItem(event.getCurrentItem()) == null && item.getItemData().isShouldBeUnique()) {
+            ItemStack stack = CustomItemManager.getManager().putUUID(event.getCurrentItem());
+            event.setCurrentItem(stack);
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -90,11 +119,15 @@ public class CustomItemListener implements Listener {
 
         String heldItemID, offHandHeldItemID;
 
+        // Проверяем основную руку на кастомный предмет и выполняем с ней действия
         if (heldItem != null && heldItem.getItemMeta() != null && heldItem.getItemMeta().getPersistentDataContainer().has(manager.getCustomItemKey(), PersistentDataType.STRING)) {
             heldItemID = heldItem.getItemMeta().getPersistentDataContainer().get(manager.getCustomItemKey(), PersistentDataType.STRING);
             CustomItem citem = manager.getItems().get(heldItemID);
             if (citem == null) {
-                Debug.error(damager, "Предмет " + heldItemID + " не зарегистрирован. (Предмет игрока: " + damager + ")");
+                Debug.error(damager, Localization.prefix + " " + Localization.itemNotRegistered
+                    .replace("%player%", damager.getName())
+                    .replace("%customitem_id%", heldItemID)
+                );
             } else {
                 List<CustomItemFlag> flags = citem.getItemData().getFlags();
                 if (flags.contains(CustomItemFlag.DisableActions)) {
@@ -107,15 +140,19 @@ public class CustomItemListener implements Listener {
                     return;
                 }
 
-                citem.itemDamagedEntity(event);
+                citem.itemDamagedEntity(event, CustomItemManager.getUUIDFromCustomItem(heldItem));
             }
         }
 
+        // Тоже самое для вторичной руки
         if (offHandHeldItem != null && offHandHeldItem.getItemMeta() != null && offHandHeldItem.getItemMeta().getPersistentDataContainer().has(manager.getCustomItemKey(), PersistentDataType.STRING)) {
             offHandHeldItemID = offHandHeldItem.getItemMeta().getPersistentDataContainer().get(manager.getCustomItemKey(), PersistentDataType.STRING);
             CustomItem citem = manager.getItems().get(offHandHeldItemID);
             if (citem == null) {
-                Debug.error(damager, "Предмет " + offHandHeldItemID + " не зарегистрирован. (Предмет игрока: " + damager + ")");
+                Debug.error(damager, Localization.prefix + " " + Localization.itemNotRegistered
+                    .replace("%player%", damager.getName())
+                    .replace("%customitem_id%", offHandHeldItemID)
+                );
             } else {
                 List<CustomItemFlag> flags = citem.getItemData().getFlags();
                 if (flags.contains(CustomItemFlag.DisableActions)) {
@@ -128,7 +165,7 @@ public class CustomItemListener implements Listener {
                     return;
                 }
                 
-                citem.itemDamagedEntity(event);
+                citem.itemDamagedEntity(event, CustomItemManager.getUUIDFromCustomItem(offHandHeldItem));
             }
         }
 

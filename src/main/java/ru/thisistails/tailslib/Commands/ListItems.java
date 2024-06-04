@@ -29,13 +29,13 @@ public class ListItems implements CommandExecutor {
         StringBuffer text = new StringBuffer();
         
         if (lItems.isEmpty()) {
-            text.append("Сейчас нету загруженных предметов.");
+            text.append("No items loaded.");
             toSend = Component.text(text.toString());
             sender.sendMessage(toSend);
             return true;
         }
 
-        text.append("Загруженные предметы: ");
+        text.append("Loaded items: ");
 
         for (Entry<String, CustomItem> items : lItems.entrySet()) {
             CustomItem item = items.getValue();

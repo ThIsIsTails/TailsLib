@@ -16,13 +16,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
- * Помошник для рейтрейса объектов
+ * RayTrace helper
  */
 @AllArgsConstructor
 public class RayTrace {
 
     /**
-     * Опции для рейтрейса существ
+     * Options for entity raytrace
      */
     @Data
     @AllArgsConstructor
@@ -31,7 +31,7 @@ public class RayTrace {
     }
 
     /**
-     * Опции для частиц
+     * Options for particles
      */
     @Data
     @AllArgsConstructor
@@ -42,7 +42,7 @@ public class RayTrace {
     }
 
     /**
-     * Опции для рейтрейса блоков
+     * Options for block raytrace
      */
     @Data
     @AllArgsConstructor
@@ -62,9 +62,9 @@ public class RayTrace {
     //---------------------------\\
 
     /**
-     * Отправляет луч и проверяет ТОЛЬКО на существ.
+     * Sends a beam and checks ONLY against creatures.
      * @param settings  {@link RayTraceEntitySettings}
-     * @return          {@link RayTraceResult} или null если ни с чем не столкнулось.
+     * @return          {@link RayTraceResult} or null if you haven't run into anything.
      */
     public @Nullable RayTraceResult rayTraceEntity(RayTraceEntitySettings settings) {
         return world.rayTraceEntities(
@@ -77,10 +77,10 @@ public class RayTrace {
     }
 
     /**
-     * Отправляет луч и проверяет ТОЛЬКО на существ.
+     * Sends a beam and checks ONLY against creatures.
      * @param settings  {@link RayTraceEntitySettings}
      * @param particleOptions  {@link RayTraceParticleSettings}
-     * @return  {@link RayTraceResult} или null если ни с чем не столкнулось.
+     * @return  {@link RayTraceResult} or null if you haven't run into anything.
      */
     public @Nullable RayTraceResult rayTraceEntity(RayTraceEntitySettings settings, RayTraceParticleSettings particleOptions) {
         RayTraceResult result = rayTraceEntity(settings);
@@ -96,9 +96,9 @@ public class RayTrace {
     //---------------------------\\
 
     /**
-     * Отправляет луч который сталкивается только с блоками
+     * Sends a beam that only collides with blocks
      * @param settings  {@link RayTraceBlockSettings}
-     * @return                          {@link RayTraceResult} или null если ни с чем не столкнулось.
+     * @return                          {@link RayTraceResult} or null if you haven't run into anything.
      */
     public @Nullable RayTraceResult rayTraceBlock(RayTraceBlockSettings settings) {
         return world.rayTraceBlocks(
@@ -111,10 +111,10 @@ public class RayTrace {
     }
 
     /**
-     * Отправляет луч который сталкивается только с блоками
+     * Sends a beam that only collides with blocks
      * @param settings  {@link RayTraceBlockSettings}
      * @param particleOptions  {@link RayTraceParticleSettings}
-     * @return                          {@link RayTraceResult} или null если ни с чем не столкнулось.
+     * @return                          {@link RayTraceResult} or null if you haven't run into anything.
      */
     public @Nullable RayTraceResult rayTraceBlock(RayTraceBlockSettings settings, RayTraceParticleSettings particleOptions) {
         for (int i = 0; i < distance; i++) {
@@ -128,10 +128,10 @@ public class RayTrace {
     //---------------------------\\
 
     /**
-     * Отправляет луч и проверяет на столкновение с чем угодно.
+     * Sends out a beam and checks for collision with anything.
      * @param blockSettings {@link RayTraceBlockSettings}
      * @param entitySettings {@link RayTraceEntitySettings}
-     * @return {@link RayTraceResult} или null если ни с чем не столкнулось.
+     * @return {@link RayTraceResult} or null if you haven't run into anything.
      */
     public @Nullable RayTraceResult rayTraceAny(RayTraceBlockSettings blockSettings, RayTraceEntitySettings entitySettings) {
         return world.rayTrace(start, direction, raySize,
@@ -141,11 +141,11 @@ public class RayTrace {
     }
 
     /**
-     * 
+     * Sends out a beam and checks for collision with anything.
      * @param blockSettings {@link RayTraceBlockSettings}
      * @param entitySettings {@link RayTraceEntitySettings}
      * @param particleOptions {@link RayTraceParticleSettings}
-     * @return {@link RayTraceResult} или null если ни с чем не столкнулось.
+     * @return {@link RayTraceResult} or null if you haven't run into anything.
      */
     public @Nullable RayTraceResult rayTraceAny(RayTraceBlockSettings blockSettings, RayTraceEntitySettings entitySettings, RayTraceParticleSettings particleOptions) {
         for (int i = 0; i < distance; i++) {

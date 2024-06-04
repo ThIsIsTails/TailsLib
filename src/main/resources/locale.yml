@@ -1,0 +1,30 @@
+prefix: "[&eTailsLib&r]"
+
+effects:
+  # Placeholders:
+  # %effect_name% - Name of custom effect
+  # %effect_duration% - Effect duration in seconds
+  # %effect_level% - Custom effect level.
+  onApply: "Effect &e%effect_name%&r &8(%effect_level%)&r &bapplied&r to you for &e%effect_duration% seconds&f."
+  onEffectEnd: "Effect &e%effect_name%&r is over."
+  onInterruption: "The &e%effect_name%&r effect has been &cinterrupted&e and has been removed from you."
+  commands:
+    effectApplied: "&bYou&r &eapplied&r effect with ID &e%effect_id%&r to player named &e%player%&r."
+    effectNotFound: "Effect with ID &e%effect_id%&r not found or not registered yet."
+    allEffectsCleared: "All effects has been cleared from %player%"
+    effectCleared: "Effect %effect_id% cleared from %player%"
+  placeholders:
+    effectsNoEffects: "No effects."
+
+errors:
+  # Placeholders:
+  # %player% - player name
+  # %customitem_id% - ID of custom item
+  itemNotRegistered: "Item with ID &e%customitem_id%&r is not registered. &8[Player: %player%]"
+
+  onlyPlayerAllowed: "Only players allowed to use this command."
+  numberFormatException: "Can't parse numbers from arguments."
+  
+  # Placeholders:
+  # %player% - Player name
+  playerNotFound: "Player &e%player%&r not found."

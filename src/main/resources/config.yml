@@ -1,6 +1,14 @@
 debug:
-  enabled: false
-  console: true # Логировать в консоль?
+  enabled: no
+
+  # Log to console?
+  console: yes
+
+  #TailsLib will stop reporting errors that may break the server or plugin errors.
+  #By default, TailsLib will send error messages to the player even if debug.enabled is turned off.
+  supressErrors: no
+
+  # Prefix for debug.
   prefix: "&r[%s&r]"
   info: "ИНФО"
   warn: "&eПРЕД"
@@ -8,11 +16,15 @@ debug:
 
 items:
   loadBlockedItems: no
-  registerTestItems: yes
 
-# Плагин не начнёт загружать определённые вещи пока остальные модули не будут запущены.
-# Нужно вводить название плагина указанное в plugin.yml
-modules: []
+tests:
+  registerTests: yes
+
+effects:
+  sendMessages: yes
+
 waitBeforeLoadBlocks: 2
+
+autosaveEnabled: yes
 
 blacklistedItems: []

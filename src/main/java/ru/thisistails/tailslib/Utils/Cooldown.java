@@ -1,39 +1,45 @@
 package ru.thisistails.tailslib.Utils;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
 
 import lombok.Getter;
 
 /**
- * Простая реализация кулдауна для
- * использования её в разных моментах.
- * <p>Использует вызовы из {@link BukkitTask} из-за чего вызывать
- * кд до момента загрузки сервера нельзя.</p>
+ * A simple implementation of the cooldown for
+ * Using it in different moments.
+ * <p>Use calls from {@link BukkitTask} which makes it impossible to call
+ * cooldown before the server boots up. </p>
  * @see BukkitTask
  * @see BukkitRunnable
  */
 public class Cooldown<T> {
 
     private @Getter Map<T, BukkitTask> cooldowns;
+    private @Getter Plugin plugin;
     
-    public Cooldown() {
-        cooldowns = new HashMap<>();
+    public Cooldown(String pluginName) {
+        cooldowns = new ConcurrentHashMap<>();
+        plugin = Bukkit.getPluginManager().getPlugin(pluginName);
+        if (plugin == null) throw new NullPointerException("Plugin " + pluginName + " not found.");
     }
 
     /**
-     * Отправляет T в кулдаун.
-     * @param arg       Аргумент который отправлять в кд
-     * @param seconds   Секунды (уже умножены на 20 для тиков)
+     * Sends T into a cooldown.
+     * @param arg       Argument to send to cd
+     * @param seconds   Seconds (Already multiplied by 20 for ticks)
+     * @apiNote         If T already exists then this function will do nothing.
      */
-    public void addNewCooldown(T arg, long seconds) {
+    public void addNewCooldown(@NotNull T arg, long seconds) {
         seconds = seconds * 20;
-        Plugin plugin = Bukkit.getPluginManager().getPlugin("TailsLib");
+
+        if (cooldowns.containsKey(arg)) return;
 
         cooldowns.put(arg, new BukkitRunnable() {
 
@@ -46,23 +52,92 @@ public class Cooldown<T> {
     }
 
     /**
-     * Отправляет T в кулдаун.
-     * @param arg       Аргумент который отправлять в кд
-     * @param seconds   Секунды (уже умножены на 20 для тиков)
-     * @param runnable  Что будет выполнено после того как выйдет время.
+     * Sends T into a cooldown.
+     * @param arg       Argument to send to cd
+     * @param seconds   Seconds (Already multiplied by 20 for ticks)
+     * @apiNote         If T already exists then this function will do nothing.
      */
-    public void addNewCooldown(T arg, long seconds, BukkitRunnable runnable) {
+    public void addNewCooldown(@NotNull T arg, long seconds, boolean rewriteIfExists) {
         seconds = seconds * 20;
-        Plugin plugin = Bukkit.getPluginManager().getPlugin("TailsLib");
 
-        cooldowns.put(arg, runnable.runTaskLater(plugin, seconds));
+        if (cooldowns.containsKey(arg)) {
+            if (!rewriteIfExists) return;
+
+            cooldowns.get(arg).cancel();
+        }
+
+        cooldowns.put(arg, new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                cooldowns.remove(arg);
+            }
+            
+        }.runTaskLater(plugin, seconds));
     }
 
     /**
-     * Убирает T из кулдауна.
-     * @param arg   Аргумент типа T который находится в списке.
+     * Sends T into a cooldown.
+     * @param arg       Argument to send to cd
+     * @param seconds   Seconds (Already multiplied by 20 for ticks)
+     * @param runnable  Which will be accomplished after the time is up.
+     * @apiNote         If T already exists then this function will do nothing.
      */
-    public void removeCooldown(T arg) {
+    public void addNewCooldown(@NotNull T arg, long seconds, @NotNull Runnable runnable) {
+        seconds = seconds * 20;
+
+        if (cooldowns.containsKey(arg)) return;
+
+        cooldowns.put(arg, new BukkitRunnable() {
+
+            // Перезаписываем т.к почему бы и нет)
+            // Никто не будет в конце приписывать cooldown#remove
+            // Все это и так знают
+            @Override
+            public void run() {
+                cooldowns.remove(arg);
+                runnable.run();
+            }
+            
+        }.runTaskLater(plugin, seconds));
+    }
+
+    /**
+     * Sends T into a cooldown.
+     * @param arg       Argument to send to cd
+     * @param seconds   Seconds (Already multiplied by 20 for ticks)
+     * @param runnable  Which will be accomplished after the time is up.
+     * @apiNote         If T already exists and rewriteIfExists is true then it will cancel previous task and create a new one.
+     */
+    public void addNewCooldown(@NotNull T arg, long seconds, @NotNull Runnable runnable, boolean rewriteIfExists) {
+        seconds = seconds * 20;
+
+        if (cooldowns.containsKey(arg)) {
+            if (!rewriteIfExists) return;
+
+            cooldowns.get(arg).cancel();
+        }
+
+        cooldowns.put(arg, new BukkitRunnable() {
+
+            // Перезаписываем т.к почему бы и нет)
+            // Никто не будет в конце приписывать cooldown#remove
+            // Все это и так знают
+            // +мы гарантируем, что кд будет удалён после истечения времени
+            @Override
+            public void run() {
+                cooldowns.remove(arg);
+                runnable.run();
+            }
+            
+        }.runTaskLater(plugin, seconds));
+    }
+
+    /**
+     * Removes T from cooldown
+     * @param arg   T like argument.
+     */
+    public void removeCooldown(@NotNull T arg) {
         cooldowns.get(arg).cancel();
         cooldowns.remove(arg);
     }

@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import ru.thisistails.tailslib.Tools.CommandsHelper;
+
 import ru.thisistails.tailslib.Tools.Debug;
 
 public class SettingsCommand implements CommandExecutor, TabCompleter {
@@ -46,19 +46,19 @@ public class SettingsCommand implements CommandExecutor, TabCompleter {
         switch (option) {
             case DebugLog:
                 if (args.length != 2) {
-                    sender.sendMessage("Для этой опции нужно указать true или false");
+                    sender.sendMessage("You need to specify true or false for this command.");
                     return true;
                 }
-                if (!CommandsHelper.isNotConsoleUser(sender, null)) return true;
+                if (!(sender instanceof Player)) return true;
 
                 boolean value = Boolean.parseBoolean(args[1]);
 
                 if (value) {
                     Debug.ignorePlayer((Player) sender);
-                    sender.sendMessage("Вы больше не будете получать откладочные сообщения.");
+                    sender.sendMessage("You will no longer recieve debug logs.");
                 } else {
                     Debug.stopIgnoringPlayer((Player) sender);
-                    sender.sendMessage("Вы будете получать откладочные сообщения.");
+                    sender.sendMessage("You will recieve debug logs.");
                 }
                 break;
             

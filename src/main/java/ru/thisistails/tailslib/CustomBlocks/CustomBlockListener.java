@@ -41,6 +41,7 @@ public class CustomBlockListener implements Listener {
         Location location = event.getBlockPlaced().getLocation();
 
         CustomBlockManager.getInstance().placeBlock(block, location, player.getUniqueId());
+        CustomBlockManager.getInstance().savePlacedBlocksDatas();
         block.onCreation(event);
     }
 
@@ -54,10 +55,11 @@ public class CustomBlockListener implements Listener {
         CustomItem citem = placedBlockData.getPlacedBlock().getData().getItem();
         event.setDropItems(false);
         if (placedBlockData.getPlacedBlock().getData().isDropItem()) {
-            player.getInventory().addItem(CustomItemManager.getManager().createItem(citem));
+            player.getInventory().addItem(CustomItemManager.createItem(citem));
         }
 
         CustomBlockManager.getInstance().removePlacedBlock(placedBlockData);
+        CustomBlockManager.getInstance().savePlacedBlocksDatas();
         placedBlockData.getPlacedBlock().onDestroy(event);
     }
 
@@ -71,10 +73,13 @@ public class CustomBlockListener implements Listener {
 
             if (data == null) return;
 
-            if (event.getHand().equals(EquipmentSlot.HAND) && event.getItem() != null)
-                data.getPlacedBlock().onRightClickOnBlockWithItem(player, event.getItem());
-            else
-                data.getPlacedBlock().onRightClearClickOnBlock(player);
+            if (event.getHand().equals(EquipmentSlot.HAND)) {
+                if (event.getItem() != null) {
+                    data.getPlacedBlock().onRightClickOnBlockWithItem(player, event.getItem());
+                } else {
+                    data.getPlacedBlock().onRightClearClickOnBlock(player);
+                }
+            }
         }
     }
 }

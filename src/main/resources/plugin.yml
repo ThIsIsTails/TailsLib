@@ -2,9 +2,11 @@ version: ${project.version}
 name: TailsLib
 main: ru.thisistails.tailslib.TailsLib
 author: ThIsIsTails
-description: TailsLib is a lib for plugins by ThIsIsTails.
+description: TailsLib is a lib for custom things.
 api-version: 1.20
 prefix: TailsLib
+
+softdepend: [PlaceholderAPI]
 
 commands:
   listitems:
@@ -16,6 +18,9 @@ commands:
   cblockplaced:
     usage: /cblockplaced [PLACE]
     permission: tailslib.cblockplaced
+  customeffect:
+    usage: /ceffect [check (player) | give (player) (effect_id) (level) (duration) | remove player effect_id | list]
+    permission: tailslib.ceffect
   tailslib:
     usage: /tailslib [info|dlog (true|false)]
     permission: tailslib.settings

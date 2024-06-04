@@ -6,19 +6,19 @@ import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.google.gson.annotations.Expose;
-
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
 import ru.thisistails.tailslib.CustomBlocks.CustomBlock;
 
 @Data
 public class PlacedBlockData {
 
-    private @Expose UUID uuid = UUID.randomUUID();
+    private @NotNull @Setter(AccessLevel.NONE) UUID uuid;
 
-    private @Expose @NotNull Location location;
+    private @Setter(AccessLevel.NONE) @NotNull Location location;
     // Может быть null если блок был поставлен командой.
-    private @Expose @Nullable UUID ownerUuid;
-    private @Expose @NotNull CustomBlock placedBlock;
+    private @Nullable UUID ownerUuid;
+    private @Setter(AccessLevel.NONE) @NotNull CustomBlock placedBlock;
     
 }

@@ -17,7 +17,7 @@ public class TestBlock implements CustomBlock {
 
     @Override
     public @NotNull CustomBlockData getData() {
-        return new CustomBlockData(CustomItemManager.getManager().getItemByID("simplecustomitemforblock"), "testcustomblock", Material.DARK_OAK_LOG);
+        return new CustomBlockData(CustomItemManager.getItemByID("simplecustomitemforblock"), "testcustomblock", Material.DARK_OAK_LOG);
     }
 
     @Override
